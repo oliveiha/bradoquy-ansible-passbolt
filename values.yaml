@@ -1,0 +1,114 @@
+# Default values for passbolt-helm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+# Image
+image:
+  repository: "passbolt/passbolt"
+  tag: latest
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+podLabels: {}
+
+# Passbolt configuration
+passbolt:
+  persistence:
+    enabled: true
+    ## passbolt application Persistent Volume Storage Class
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is
+    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+    ##   GKE, AWS & OpenStack)
+    ##
+    # storageClass: "-"
+    accessMode: ReadWriteMany
+    size: 1Gi
+  config:
+    debug: false
+    registration: false
+    salt: "your salt"
+    gpgServerKeyFingerprint: "your gpg server key fingerprint"
+    # serverkey_private:
+    # serverkey:
+    license:
+      enabled: false
+      # key:
+    plugins:
+      exportenabled: true
+      importenabled: true
+    email:
+      enabled: false
+      from: bradoquy@gmail.com
+      host: localhost
+      port: 25
+      tls: false
+      timeout: 30
+      username: username
+      password: password
+    livenessProbe:
+      failureThreshold: 3
+      successThreshold: 1
+      periodSeconds: 10
+      initialDelaySeconds: 60
+      timeoutSeconds: 10
+    readinessProbe:
+      failureThreshold: 3
+      successThreshold: 1
+      periodSeconds: 10
+      initialDelaySeconds: 60
+      timeoutSeconds: 10
+
+# Pod security specific configurations. see deployment.yaml
+podSecurityContext: {}
+securityContext: {}
+
+# Database (dependency:mariadb)
+mariadb:
+  replication:
+    enabled: false
+  db:
+    name: passbolt
+    user: passbolt
+    password: passbolt
+
+
+# Service
+service:
+  type: nodePort
+  port: 80
+
+# Ingress
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  host: "passbolt.bradoquy.com"
+  tls:
+    enabled: false
+  #  secretName: chart-example-tls
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+

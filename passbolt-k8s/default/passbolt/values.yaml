@@ -1,0 +1,48 @@
+secret:
+  passboltGPG: gpg-passbolt
+  passboltSSL: ssl-passbolt
+  mysqlSSL: mysql-passbolt-ssl
+
+deployment:
+  env:
+    APP_BASE_URL: passbolt.bradoquy.com.br
+    DATASOURCES_DEFAULT_HOST: mysql-passbolt
+    DATASOURCES_DEFAULT_PORT: '3306'
+    DATASOURCES_DEFAULT_USERNAME: passbolt
+    DATASOURCES_DEFAULT_PASSWORD: passbolt123
+    DATASOURCES_DEFAULT_DATABASE: passbolt
+    DATASOURCES_SSL_KEY: /etc/ssl/certs/mysql-key.pem
+    DATASOURCES_SSL_CERT: /etc/ssl/certs/mysql-cert.pem
+    DATASOURCES_SSL_CA: /etc/ssl/certs/mysql-ca.pem
+    EMAIL_DEFAULT_FROM: oliveiha@gmail.com
+    EMAIL_TRANSPORT_DEFAULT_HOST: smtp.gmail.com
+    EMAIL_TRANSPORT_DEFAULT_PORT: '587'
+    EMAIL_TRANSPORT_DEFAULT_USERNAME: bradoquy@gmail.com
+    EMAIL_TRANSPORT_DEFAULT_PASSWORD: Dani@160202
+    EMAIL_TRANSPORT_DEFAULT_TLS: true
+    PASSBOLT_GPG_SERVER_KEY_FINGERPRINT: 3EAB80C71CADA4C7973CBAD1DB4442F3CFC4D197
+    PASSBOLT_REGISTRATION_PUBLIC: false
+    PASSBOLT_SSL_FORCE: true
+
+configMYSQL:
+  mysql_custom.cnf: |-
+    [client]
+    ssl-ca = /etc/ssl/certs/mysql-ca.pem
+    ssl-cert = /etc/ssl/certs/mysql-cert.pem
+    ssl-key = /etc/ssl/certs/mysql-key.pem
+
+mysqlSSL: true
+
+# Service
+service:
+  type: NodePort
+  port: 443
+
+ingress:
+  enabled: false
+  type: nginx
+  host: passbolt.com
+  namespace: passbolt
+  sslSecret: ssl-passbolt-com
+  annotations:
+    - 'nginx.org/ssl-services: "true"'

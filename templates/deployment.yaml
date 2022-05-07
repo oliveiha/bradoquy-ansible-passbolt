@@ -1,0 +1,144 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "passbolt-helm.fullname" . }}
+  labels:
+{{ include "passbolt-helm.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "passbolt-helm.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "passbolt-helm.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        {{- if .Values.podLabels }}
+        {{- toYaml .Values.podLabels | nindent 8 }}
+        {{- end }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: passbolt
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          - name: APP_FULL_BASE_URL
+            value: https://{{ .Values.ingress.host }}
+          - name: DATASOURCES_DEFAULT_HOST
+            value: {{ .Release.Name }}-mariadb
+          - name: DATASOURCES_DEFAULT_USERNAME
+            value: {{ .Values.mariadb.db.user }}
+          - name: DATASOURCES_DEFAULT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-mariadb
+                key: mariadb-password
+          - name: DATASOURCES_DEFAULT_DATABASE
+            value: {{ .Values.mariadb.db.name }}
+          {{- if .Values.passbolt.config.email.enabled }}
+          - name: EMAIL_DEFAULT_FROM
+            value: {{ .Values.passbolt.config.email.from }}
+          - name: EMAIL_TRANSPORT_DEFAULT_HOST
+            value: {{ .Values.passbolt.config.email.host }}
+          - name: EMAIL_TRANSPORT_DEFAULT_PORT
+            value: {{ .Values.passbolt.config.email.port | quote }}
+          {{- if .Values.passbolt.config.email.tls }}
+          - name: EMAIL_TRANSPORT_DEFAULT_TLS
+            value: {{ .Values.passbolt.config.email.tls | quote }}
+          {{- end }}
+          - name: EMAIL_TRANSPORT_DEFAULT_TIMEOUT
+            value: {{ .Values.passbolt.config.email.timeout | quote }}
+          {{- if .Values.passbolt.config.email.username }}
+          - name: EMAIL_TRANSPORT_DEFAULT_USERNAME
+            value: {{ .Values.passbolt.config.email.username }}
+          - name: EMAIL_TRANSPORT_DEFAULT_PASSWORD
+            value: {{ .Values.passbolt.config.email.password }}
+          {{- end }}
+          {{- end }}
+          - name: PASSBOLT_REGISTRATION_PUBLIC
+            value: {{ .Values.passbolt.config.registration | quote }}
+          - name: SECURITY_SALT
+            value: {{ .Values.passbolt.config.salt }}
+          - name: PASSBOLT_PLUGINS_EXPORT_ENABLED
+            value: {{ .Values.passbolt.config.plugins.exportenabled | quote }}
+          - name: PASSBOLT_PLUGINS_IMPORT_ENABLED
+            value: {{ .Values.passbolt.config.plugins.importenabled | quote }}
+          - name: PASSBOLT_GPG_SERVER_KEY_FINGERPRINT
+            value: {{ .Values.passbolt.config.gpgServerKeyFingerprint }}
+          - name: DEBUG
+            value: {{ .Values.passbolt.config.debug | quote }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          volumeMounts:
+          {{- if .Values.passbolt.persistence.enabled }}
+            - mountPath: /usr/share/php/passbolt/webroot/img/public
+              name: data
+              subPath: public
+          {{- end }}
+            - name: gpg
+              mountPath: /etc/passbolt/gpg
+              readOnly: true
+          {{- if .Values.passbolt.config.license.enabled }}
+            - name: license
+              mountPath: /etc/passbolt/license
+              subPath: license
+              readOnly: true
+          {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /auth/login
+              port: http
+            failureThreshold: {{ .Values.passbolt.config.livenessProbe.failureThreshold }}
+            successThreshold: {{ .Values.passbolt.config.livenessProbe.successThreshold }}
+            periodSeconds: {{ .Values.passbolt.config.livenessProbe.periodSeconds }}
+            initialDelaySeconds: {{ .Values.passbolt.config.livenessProbe.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.passbolt.config.livenessProbe.timeoutSeconds }}
+          readinessProbe:
+            httpGet:
+              path: /auth/login
+              port: http
+            failureThreshold: {{ .Values.passbolt.config.readinessProbe.failureThreshold }}
+            successThreshold: {{ .Values.passbolt.config.readinessProbe.successThreshold }}
+            periodSeconds: {{ .Values.passbolt.config.readinessProbe.periodSeconds }}
+            initialDelaySeconds: {{ .Values.passbolt.config.readinessProbe.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.passbolt.config.readinessProbe.timeoutSeconds }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        {{- if .Values.passbolt.persistence.enabled }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ template "passbolt-helm.fullname" . }}-data
+        {{- end }}
+        - name: gpg
+          secret:
+            secretName: {{ template "passbolt-helm.fullname" . }}-gpg
+        {{- if .Values.passbolt.config.license.enabled }}
+        - name: license
+          secret:
+            secretName: {{ template "passbolt-helm.fullname" . }}-license
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
