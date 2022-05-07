@@ -7,28 +7,16 @@
   <a href="/LICENSE " target="_blank">
     <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
   </a>
-  <a href="https://twitter.com/fidelissauro" target="_blank">
+  <a href="https://twitter.com/hdoliveiha" target="_blank">
     <img alt="Twitter: fidelissauro" src="https://img.shields.io/twitter/follow/fidelissauro.svg?style=social" />
   </a>
 </p>
 
-## Terraform Versions Compatibility
+## Passbolt Version
 <p>
   <a href="/" target="_blank">
     <img alt="Terraform 0.13" src="https://github.com/oliveiha/eks-with-istio/workflows/Terraform%200.13.*/badge.svg" />
   </a>
-  <a href="/" target="_blank">
-    <img alt="Terraform 0.14" src="https://github.com/oliveiha/eks-with-istio/workflows/Terraform%200.14.*/badge.svg" />
-  </a> 
-  <a href="/" target="_blank">
-    <img alt="Terraform 0.15" src="https://github.com/oliveiha/eks-with-istio/workflows/Terraform%200.15.*/badge.svg" />
-  </a>
-  <a href="/" target="_blank">
-    <img alt="Terraform 1.0.0" src="https://github.com/oliveiha/eks-with-istio/workflows/Terraform%201.0.*/badge.svg" />
-  </a> 
-  <a href="/" target="_blank">
-    <img alt="Terraform 1.1.0" src="https://github.com/oliveiha/eks-with-istio/workflows/Terraform%201.1.*/badge.svg" />
-  </a>   
 </p>
 
 
