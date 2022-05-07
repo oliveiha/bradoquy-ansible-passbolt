@@ -15,7 +15,7 @@
 ## Passbolt Version v3.5.0-2
 <p>
   <a href="/" target="_blank">
-    <img alt="Passbolt 3.5.0-2" src="https://github.com/oliveiha/eks-with-istio/workflows/Terraform%200.13.*/badge.svg" />
+    <img alt="Passbolt 3.5.0-2" src="https://github.com/oliveiha/bradoquy-ansible-passbolt/tree/main/imgs/passbolt-icon.svg" />
   </a>
 </p>
 
