@@ -8,11 +8,11 @@
     <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
   </a>
   <a href="https://twitter.com/hdoliveiha" target="_blank">
-    <img alt="Twitter: fidelissauro" src="https://img.shields.io/twitter/follow/fidelissauro.svg?style=social" />
+    <img alt="Twitter: bradoquy" src="https://img.shields.io/twitter/follow/bradoquy.svg?style=social" />
   </a>
 </p>
 
-## Passbolt Version
+## Passbolt Version v3.5.0-2
 <p>
   <a href="/" target="_blank">
     <img alt="Terraform 0.13" src="https://github.com/oliveiha/eks-with-istio/workflows/Terraform%200.13.*/badge.svg" />
@@ -211,7 +211,7 @@ terraform plan
 👤 **Matheus Fidelis**
 
 * Website: https://raj.ninja
-* Twitter: [@fidelissauro](https://twitter.com/fidelissauro)
+* Twitter: [@bradoquy](https://twitter.com/bradoquy)
 * Github: [@oliveiha](https://github.com/oliveiha)
 * LinkedIn: [@oliveiha](https://linkedin.com/in/oliveiha)
 
